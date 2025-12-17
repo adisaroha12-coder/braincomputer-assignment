@@ -22,23 +22,15 @@ void detect_peak_stream(float sample, int index, int detected_peaks[]) {
 static float prev_sample = 0.0f;   // store previous sample
     static int peak_active = 0;         //this prevents multiple detections of same peak
 
-if (sample > PEAK_THRESHOLD && sample > prev_sample && !peak_active)
-    {
-        detected_peaks[index] = 1;   // peak is  detected at this index value
+if (sample > PEAK_THRESHOLD && sample > prev_sample && !peak_active)  //consider the case of (sample>prev_sample) to consider the case of rising as we are not sure about the coming probable peaks
+    { detected_peaks[index] = 1;   // peak is  detected at this index value
         peak_active = 1;             // it makes us clear that we are inside the peak
     }
-    else
-    {
+    else {
         detected_peaks[index] = 0;   // no peak is detected
     }
-
-    /*
-       Reset peak_active when signal goes back below the threshold value.
-       this allows detection of the next peak.
-    */
-    if (sample < PEAK_THRESHOLD)
-    {
-        peak_active = 0;
+    if (sample < PEAK_THRESHOLD) {
+        peak_active = 0; //reset peak_active to 0 if eeg[i] value goes below threshold value
     }
     prev_sample = sample;
 }
