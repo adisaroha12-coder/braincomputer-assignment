@@ -1,0 +1,25 @@
+#define WINDOW_SIZE 5
+#define DEV_THRESHOLD 0.5f
+void detect_peak_moving_avg(float sample, int index, int detected_peaks[]){ 
+    static float window[WINDOW_SIZE] = {0};// Static variables preserve values between function calls
+    static int win_idx = 0;
+    static float prev_sample = 0;
+    static float prev_prev_sample = 0;
+float sum = 0.0f;
+    float moving_avg;//Insert current sample into circular window 
+    window[win_idx] = sample;
+    win_idx = (win_idx + 1) % WINDOW_SIZE;//Computing the moving average 
+    for (int i = 0; i < WINDOW_SIZE; i++) sum += window[i];
+moving_avg = sum / WINDOW_SIZE;
+// now peak is detected by comparing the sample value with its neighbouring values, and also if it satisfies the condition another condition arises whether its value is greater then the deviation threshold value
+    if (index >= WINDOW_SIZE)
+    {if (prev_sample > prev_prev_sample &&
+            prev_sample > sample &&
+            (prev_sample - moving_avg) >= DEV_THRESHOLD)
+        {
+            detected_peaks[index - 1] = 1;   // peak is detected ath the index which is storing the prev_sample value
+        }
+    }//Shift samples for next call 
+    prev_prev_sample = prev_sample;
+    prev_sample = sample;
+}
